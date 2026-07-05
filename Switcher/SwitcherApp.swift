@@ -13,5 +13,6 @@ struct SwitcherApp: App {
         WindowGroup {
             ContentView()
         }
+        .windowResizability(.contentSize)
     }
 }
