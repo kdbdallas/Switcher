@@ -12,24 +12,30 @@ private final class FullScreenWindow: NSWindow {
     override var canBecomeMain: Bool { true }
 }
 
+/// Displays one slideshow full-screen on a single screen. Owns only its own window and
+/// view model; app-wide concerns shared across screens (cursor visibility, presentation
+/// options, key handling) are coordinated by `PlaybackSessionController`.
 final class PlaybackWindowController: NSWindowController {
-    private let viewModel: PlaybackViewModel
+    let viewModel: PlaybackViewModel
     private let interval: TimeInterval
-    private let onFinish: () -> Void
-    private var escapeMonitor: Any?
 
-    init(viewModel: PlaybackViewModel, interval: TimeInterval, screen: NSScreen, onFinish: @escaping () -> Void) {
+    init(viewModel: PlaybackViewModel, interval: TimeInterval, screen: NSScreen) {
         self.viewModel = viewModel
         self.interval = interval
-        self.onFinish = onFinish
 
+        // Deliberately not passing `screen:` here: on a multi-screen setup where a
+        // secondary screen has a negative origin and a different backingScaleFactor than
+        // the main screen, NSWindow's screen-aware initializer miscomputes the origin
+        // (scaling it by the secondary screen's backing scale), placing the window in the
+        // wrong spot. Creating the window screen-agnostic and positioning it explicitly
+        // with setFrame avoids that.
         let window = FullScreenWindow(
             contentRect: screen.frame,
             styleMask: [.borderless],
             backing: .buffered,
-            defer: false,
-            screen: screen
+            defer: false
         )
+        window.setFrame(screen.frame, display: true)
         window.level = .screenSaver
         window.backgroundColor = .black
         window.isOpaque = true
@@ -46,32 +52,12 @@ final class PlaybackWindowController: NSWindowController {
     }
 
     func show() {
-        guard let window else { return }
-        NSApp.presentationOptions = [.hideDock, .hideMenuBar]
-        window.makeKeyAndOrderFront(nil)
-        NSApp.activate()
-        NSCursor.hide()
+        window?.makeKeyAndOrderFront(nil)
         viewModel.start(interval: interval)
-
-        escapeMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            guard let self else { return event }
-            if event.keyCode == 53 { // Escape
-                self.finish()
-                return nil
-            }
-            return event
-        }
     }
 
-    private func finish() {
-        if let escapeMonitor {
-            NSEvent.removeMonitor(escapeMonitor)
-            self.escapeMonitor = nil
-        }
+    func stop() {
         viewModel.stop()
-        NSCursor.unhide()
-        NSApp.presentationOptions = []
         window?.close()
-        onFinish()
     }
 }

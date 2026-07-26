@@ -11,7 +11,7 @@ import AppKit
 struct ContentView: View {
     @State private var folderURL: URL?
     @State private var interval: Double = 3.0
-    @State private var playbackController: PlaybackWindowController?
+    @State private var playbackSession: PlaybackSessionController?
     @State private var errorMessage: String?
 
     var body: some View {
@@ -65,24 +65,30 @@ struct ContentView: View {
 
     private func startPlayback() {
         guard let folderURL else { return }
-        guard let screen = NSApp.keyWindow?.screen ?? NSScreen.main else { return }
 
         let (images, videos) = MediaScanner.scan(folder: folderURL)
-        guard let viewModel = PlaybackViewModel(images: images, videos: videos) else {
+        guard !images.isEmpty || !videos.isEmpty else {
             errorMessage = "No photos or videos found in that folder."
             return
         }
         errorMessage = nil
 
-        let controller = PlaybackWindowController(
-            viewModel: viewModel,
-            interval: interval,
-            screen: screen
-        ) {
-            playbackController = nil
+        // One independent slideshow per connected screen; only the main screen's video
+        // (if any) plays audio so two video slideshows don't talk over each other.
+        let mainScreen = NSScreen.main
+        let windowControllers = NSScreen.screens.compactMap { screen -> PlaybackWindowController? in
+            guard let viewModel = PlaybackViewModel(images: images, videos: videos, mutesAudio: screen != mainScreen) else {
+                return nil
+            }
+            return PlaybackWindowController(viewModel: viewModel, interval: interval, screen: screen)
         }
-        playbackController = controller
-        controller.show()
+        guard !windowControllers.isEmpty else { return }
+
+        let session = PlaybackSessionController(controllers: windowControllers) {
+            playbackSession = nil
+        }
+        playbackSession = session
+        session.show()
     }
 }
 
