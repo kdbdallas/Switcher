@@ -11,6 +11,7 @@ import AppKit
 struct ContentView: View {
     @State private var folderURL: URL?
     @State private var interval: Double = 3.0
+    @State private var displayOnAllDisplays: Bool = true
     @State private var playbackSession: PlaybackSessionController?
     @State private var errorMessage: String?
 
@@ -34,6 +35,9 @@ struct ContentView: View {
                 Text("Interval: \(interval, specifier: "%.1f")s")
             }
             .frame(width: 220)
+
+            Toggle("Display on all displays", isOn: $displayOnAllDisplays)
+                .frame(width: 220)
 
             Button("Run", action: startPlayback)
                 .disabled(folderURL == nil)
@@ -73,10 +77,12 @@ struct ContentView: View {
         }
         errorMessage = nil
 
-        // One independent slideshow per connected screen; only the main screen's video
-        // (if any) plays audio so two video slideshows don't talk over each other.
+        // One independent slideshow per connected screen (or just the main screen, if
+        // "Display on all displays" is off); only the main screen's video (if any) plays
+        // audio so multiple video slideshows don't talk over each other.
         let mainScreen = NSScreen.main
-        let windowControllers = NSScreen.screens.compactMap { screen -> PlaybackWindowController? in
+        let targetScreens = displayOnAllDisplays ? NSScreen.screens : [mainScreen].compactMap { $0 }
+        let windowControllers = targetScreens.compactMap { screen -> PlaybackWindowController? in
             guard let viewModel = PlaybackViewModel(images: images, videos: videos, mutesAudio: screen != mainScreen) else {
                 return nil
             }
