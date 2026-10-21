@@ -18,11 +18,16 @@ final class PlaybackViewModel {
     var currentImage: NSImage?
     var player: AVPlayer?
 
+    /// Current video's playback position as a fraction of its duration (0...1). Reset to 0
+    /// whenever a new video starts. Unused in `.photos` mode.
+    var progress: Double = 0
+
     let mode: Mode
 
     private var timer: Timer?
     private var lastImageIndex: Int?
     private var endObserver: NSObjectProtocol?
+    private var timeObserverToken: Any?
     private var videoQueue: [URL] = []
     private var lastVideoURL: URL?
     private var sleepAssertionID: IOPMAssertionID = 0
@@ -64,10 +69,15 @@ final class PlaybackViewModel {
             NotificationCenter.default.removeObserver(endObserver)
             self.endObserver = nil
         }
+        if let timeObserverToken {
+            player?.removeTimeObserver(timeObserverToken)
+            self.timeObserverToken = nil
+        }
         player?.pause()
         player = nil
         videoQueue.removeAll()
         lastVideoURL = nil
+        progress = 0
         disableScreenSaver()
     }
 
@@ -163,12 +173,31 @@ final class PlaybackViewModel {
             self?.playRandomVideo(from: urls)
         }
 
+        progress = 0
+
         if let player {
             player.replaceCurrentItem(with: item)
         } else {
             player = AVPlayer(playerItem: item)
             player?.isMuted = mutesAudio
+            addTimeObserver()
         }
         player?.play()
+    }
+
+    /// Installed once on the player (which is reused across videos via `replaceCurrentItem`)
+    /// to keep `progress` in sync with `currentItem`'s playback position and duration.
+    private func addTimeObserver() {
+        let interval = CMTime(seconds: 0.1, preferredTimescale: 600)
+        timeObserverToken = player?.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
+            self?.updateProgress(currentTime: time)
+        }
+    }
+
+    private func updateProgress(currentTime: CMTime) {
+        guard let duration = player?.currentItem?.duration, duration.isNumeric, duration.seconds > 0 else {
+            return
+        }
+        progress = min(max(currentTime.seconds / duration.seconds, 0), 1)
     }
 }
