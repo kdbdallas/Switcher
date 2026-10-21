@@ -15,7 +15,7 @@ private enum MediaKeyCode: Int32 {
     case rewind = 20      // NX_KEYTYPE_REWIND
 }
 
-private let fastForwardRate: Float = 4
+private let fastForwardRate: Float = 8
 private let rewindRate: Float = -4
 
 /// Coordinates one full-screen `PlaybackWindowController` per screen as a single session.
