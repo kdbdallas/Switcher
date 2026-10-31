@@ -1,6 +1,6 @@
 # Switcher
 
-![Switcher: Randomly view your photos and videos with you in control](Images/Switcher-Banner.png)
+![Switcher: Randomly view your photos and videos with you in control](Switcher/Images/Switcher-Banner.png)
 
 Switcher turns your photo and video folders into a fresh, effortless slideshow for your Mac. Pick a folder, choose how long photos stay on screen, and let Switcher shuffle through your memories, inspiration, and media automatically.
 
