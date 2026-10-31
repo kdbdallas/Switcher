@@ -1,6 +1,10 @@
 # Switcher
 
-A small macOS app that turns a folder of photos or videos into a full-screen slideshow, on one display or across all of them at once.
+![Switcher: Randomly view your photos and videos with you in control](Images/Switcher-Banner.png)
+
+Switcher turns your photo and video folders into a fresh, effortless slideshow for your Mac. Pick a folder, choose how long photos stay on screen, and let Switcher shuffle through your memories, inspiration, and media automatically.
+
+Use it on your main display for a calm changing backdrop, or bring the experience to every connected screen. With support for both photos and videos, Switcher makes every glance at your desktop feel new.
 
 ## Features
 
