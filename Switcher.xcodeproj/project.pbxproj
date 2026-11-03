@@ -10,9 +10,36 @@
 		8E9FB6932FFA499800AFE027 /* Switcher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Switcher.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8EED312630985682005F7F6D /* Exceptions for "Switcher" folder in "Switcher" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Images/Switcher-Banner.png",
+				Images/Switcher.appiconset/Contents.json,
+				Images/Switcher.appiconset/icon_16x16.png,
+				"Images/Switcher.appiconset/icon_16x16@2x.png",
+				Images/Switcher.appiconset/icon_32x32.png,
+				"Images/Switcher.appiconset/icon_32x32@2x.png",
+				Images/Switcher.appiconset/icon_128x128.png,
+				"Images/Switcher.appiconset/icon_128x128@2x.png",
+				Images/Switcher.appiconset/icon_256x256.png,
+				"Images/Switcher.appiconset/icon_256x256@2x.png",
+				Images/Switcher.appiconset/icon_512x512.png,
+				"Images/Switcher.appiconset/icon_512x512@2x.png",
+				Images/Switcher.icns,
+				Images/Switcher.iconset,
+				Images/SwitcherIconSource.png,
+			);
+			target = 8E9FB6922FFA499800AFE027 /* Switcher */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8E9FB6952FFA499800AFE027 /* Switcher */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8EED312630985682005F7F6D /* Exceptions for "Switcher" folder in "Switcher" target */,
+			);
 			path = Switcher;
 			sourceTree = "<group>";
 		};
@@ -259,6 +286,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Switcher;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -292,6 +320,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Switcher;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
